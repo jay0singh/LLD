@@ -4,7 +4,8 @@ import java.util.List;
 
 public class Total {
 
-    int getFinalAmount(Order order) {
+    public int getFinalAmount(Order order) {
+        int discount = order.getDiscount().getDiscount(order);
         List<OrderItem> items = order.getItems();
 
         int amount = 0;
@@ -13,8 +14,8 @@ public class Total {
             amount += 1;
         }
 
-        order.total = amount;
-        return amount;
+        order.total = amount - discount;
+        return amount - discount;
     }
 
 }

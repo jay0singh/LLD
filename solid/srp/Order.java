@@ -3,18 +3,21 @@ package solid.srp;
 import java.util.ArrayList;
 import java.util.List;
 
+import solid.ocp.Discount;
+
 public class Order {
 
     String name;
     Customer customer;
     List<OrderItem> items;
     int total;
+    Discount discount;
 
     String getName() {
         return this.name;
     }
 
-    List<OrderItem> getItems() {
+    public List<OrderItem> getItems() {
         return this.items;
     }
 
@@ -26,7 +29,7 @@ public class Order {
         this.total = total;
     }
 
-    void takeOrder(List<String> dishes) {
+    public void takeOrder(List<String> dishes) {
         List<OrderItem> items = new ArrayList<>();
 
         for (String dish : dishes) {
@@ -35,5 +38,17 @@ public class Order {
 
         this.items = items;
 
+    }
+
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
+    }
+
+    public Discount getDiscount() {
+        return this.discount;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
