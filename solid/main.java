@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import solid.lsp.Restaurant;
+import solid.dip.IOrderRepository;
+import solid.dip.MySQLOrderRepository;
+import solid.dip.OrderService;
+import solid.dip.SmsNotifierImpl;
 import solid.lsp.ClosedRestaurant;
 import solid.ocp.BOGO;
 import solid.srp.*;
@@ -29,5 +33,8 @@ public class main {
         for (Restaurant res : list2) {
             res.acceptOrder(order);
         }
+
+        OrderService service = new OrderService(new MySQLOrderRepository(), new SmsNotifierImpl());
+        service.serviceMethod();
     }
 }

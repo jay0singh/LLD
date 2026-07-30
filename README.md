@@ -131,3 +131,85 @@ modification"); polymorphism via a shared interface is the mechanism.
 Proof it's satisfied: adding a new promotion type (e.g.
 `FirstOrderOnlyDiscount`) requires writing exactly one new class — `Total`'s
 source is never touched.
+
+---
+
+## 6. SOLID — Liskov Substitution Principle
+`solid/lsp/`
+
+**Problem:** Some restaurants are temporarily closed and shouldn't accept
+orders, while otherwise behaving identically to a normal `Restaurant`. A
+dispatcher loops over `List<Restaurant>` and calls `acceptOrder()` on each —
+substituting a "closed" variant in must not break that caller's assumptions.
+
+- First attempt: `ClosedRestaurant extends Restaurant`, overriding
+  `acceptOrder()` to silently print a rejection message instead of
+  accepting. Diagnosed as an LSP violation — nothing throws, so a caller
+  that assumes "the call returned normally" means "the order was accepted"
+  would be silently wrong, with no way to detect it.
+- Resolution: `Restaurant` itself holds an `acceptingOrders` boolean, and
+  `acceptOrder()` branches on that state internally, printing either
+  outcome. `ClosedRestaurant` no longer overrides `acceptOrder()` at all —
+  it only sets `acceptingOrders = false` in its constructor.
+
+**Takeaway:** Because the "reject" branch now lives in the base type's own
+method, rejection becomes a legitimate, expected outcome for *any*
+`Restaurant`, not a special behavior a subclass silently introduced.
+Substituting `ClosedRestaurant` in changes nothing about what a caller is
+entitled to expect. (Also surfaced a follow-up insight: once behavior is
+state-driven rather than type-driven, `ClosedRestaurant` as a subclass
+becomes close to unnecessary — a plain `Restaurant` with
+`acceptingOrders = false` would do the same job.)
+
+---
+
+## 7. SOLID — Interface Segregation Principle
+`solid/isp/`
+
+**Problem:** A single fat `RestaurantOps` interface bundled `acceptOrder()`,
+`updateMenu()`, `viewEarningsReport()`, and `manageStaffSchedule()`. Every
+implementer — even a lightweight `PartnerKiosk` that only accepts orders —
+was forced to provide dummy implementations for methods it never uses.
+
+- Split by **actual consumer**, not by superficial theme: `OrderOps`
+  (`acceptOrder`), `RestaurantOps` (`updateMenu`), `AnalyticOps`
+  (`viewEarningsReport`), `AdminOps` (`manageStaffSchedule`).
+  `viewEarningsReport` and `manageStaffSchedule` were initially grouped
+  together as "management-ish" — corrected once it was clear an earnings
+  dashboard and a staff-scheduling tool are two different callers.
+- `PartnerKiosk implements OrderOps` only — no unused methods to stub out.
+- `Orchestrator implements RestaurantOps, OrderOps, AnalyticOps, AdminOps` —
+  a full-featured participant composed from the same small interfaces,
+  proving segregation doesn't sacrifice full functionality where it's
+  genuinely needed.
+
+**Takeaway:** Decompose by asking "which caller actually calls this method,"
+not by grouping methods that merely sound thematically related.
+
+---
+
+## 8. SOLID — Dependency Inversion Principle
+`solid/dip/`
+
+**Problem:** `OrderService` directly instantiated concrete
+`MySQLOrderRepository` and `SmsNotifierImpl` internally. Switching databases
+or A/B testing email vs SMS would require editing `OrderService` itself.
+
+- `IOrderRepository`, `INotifier` — technology-agnostic abstractions.
+  (Both went through a naming fix — first drafts were `IMySQLOrderRepository`
+  and `ISmsNotifier`, which baked a specific technology into the
+  abstraction's name and defeated the point of it.)
+- `MySQLOrderRepository implements IOrderRepository`,
+  `SmsNotifierImpl implements INotifier` — concrete classes keep
+  technology-specific names; only the interface is generic.
+- `OrderService` takes both dependencies via constructor injection, and
+  never references a concrete class by name.
+- `main.java` is where concrete choices actually get constructed and wired
+  in — the one place allowed to know about `MySQLOrderRepository`/
+  `SmsNotifierImpl` directly.
+
+**Takeaway:** High-level (`OrderService`) and low-level (`MySQLOrderRepository`)
+code both depend on the same abstraction instead of the high-level code
+depending on the low-level detail directly. Dependency injection (passing
+concrete instances in via constructor) is the *technique*; DIP is the
+*principle* it's satisfying.
