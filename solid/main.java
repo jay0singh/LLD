@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import solid.lsp.Restaurant;
+import solid.lsp.ClosedRestaurant;
 import solid.ocp.BOGO;
 import solid.srp.*;
 
@@ -21,5 +23,11 @@ public class main {
         total.getFinalAmount(order);
         saveOrder.save(order);
         notification.sendNotification(order);
+
+        List<Restaurant> list2 = new ArrayList<>(Arrays.asList(new Restaurant(), new ClosedRestaurant()));
+
+        for (Restaurant res : list2) {
+            res.acceptOrder(order);
+        }
     }
 }
