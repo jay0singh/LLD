@@ -18,7 +18,7 @@ public class Order {
 
     String orderedBy(Customer customer) {
         this.customer = customer;
-        return new String(this.name + " was ordered by " + customer.name);
+        return this.name + " was ordered by " + customer.name;
     }
 
     void setOrderItems(List<String> dishes) {

@@ -101,7 +101,7 @@ persisting itself, and sending notifications — making unrelated changes
 - `Notification` — the only class responsible for composing/sending a
   message; it reads an **already-computed** `order.getTotal()` rather than
   calling `Total` itself, so it has no dependency on how billing works.
-- `main.java` — a coordinator with no responsibility of its own beyond
+- `Main.java` — a coordinator with no responsibility of its own beyond
   sequencing: `takeOrder` → `getFinalAmount` → `save` → `sendNotification`.
 
 **Takeaway:** SRP doesn't mean classes can't call each other — it means each
@@ -204,7 +204,7 @@ or A/B testing email vs SMS would require editing `OrderService` itself.
   technology-specific names; only the interface is generic.
 - `OrderService` takes both dependencies via constructor injection, and
   never references a concrete class by name.
-- `main.java` is where concrete choices actually get constructed and wired
+- `Main.java` is where concrete choices actually get constructed and wired
   in — the one place allowed to know about `MySQLOrderRepository`/
   `SmsNotifierImpl` directly.
 

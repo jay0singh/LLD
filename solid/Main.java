@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import solid.lsp.Restaurant;
-import solid.dip.IOrderRepository;
 import solid.dip.MySQLOrderRepository;
 import solid.dip.OrderService;
 import solid.dip.SmsNotifierImpl;
@@ -13,7 +12,7 @@ import solid.lsp.ClosedRestaurant;
 import solid.ocp.BOGO;
 import solid.srp.*;
 
-public class main {
+public class Main {
     public static void main(String[] args) {
         Order order = new Order();
         order.setDiscount(new BOGO());

@@ -9,6 +9,6 @@ public class Customer {
     }
 
     String ordered(Order order) {
-        return new String(this.name + " ordered " + order.name);
+        return this.name + " ordered " + order.name;
     }
 }
